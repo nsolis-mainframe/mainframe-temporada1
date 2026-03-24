@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Gestión de Proyectos · Plane · Mainframe</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pchu-green:      #3DDB6A;
+    --pchu-green-glow: rgba(61,219,106,0.15);
+    --bg:        #0C0C0E;
+    --surface:   #141416;
+    --surface-2: #1C1C1F;
+    --surface-3: #242428;
+    --border:    rgba(255,255,255,0.07);
+    --text:      #F0F0F2;
+    --text-2:    rgba(255,255,255,0.65);
+    --text-3:    rgba(255,255,255,0.35);
+    --text-4:    rgba(255,255,255,0.2);
+    --teal:      #2DB88A;
+    --teal-light:rgba(45,184,138,0.12);
+    --amber:     #E0922A;
+    --amber-light:rgba(224,146,42,0.12);
+    --red:       #E05A3A;
+    --red-light: rgba(224,90,58,0.12);
+    --blue:      #4A82B9;
+    --blue-light:rgba(74,130,185,0.12);
+    --purple:    #7C5CBF;
+    --purple-light:rgba(124,92,191,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+  /* SIDEBAR */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--surface);
+    padding: 28px 0 24px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+  }
+  .sidebar::-webkit-scrollbar { width: 0; }
+  .sidebar-brand {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-icon {
+    width: 36px; height: 36px;
+    background: var(--pchu-green);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; color: #000;
+    flex-shrink: 0;
+  }
+  .sidebar-brand .org {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-3); margin-bottom: 2px;
+  }
+  .sidebar-brand .product {
+    font-size: 14px; font-weight: 700; color: var(--text);
+    line-height: 1.2;
+  }
+  .sidebar-brand .subtitle { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .sidebar nav { flex: 1; padding: 0 12px; }
+  .nav-section {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--text-4);
+    padding: 0 10px; margin: 22px 0 5px;
+  }
+  .nav-section:first-child { margin-top: 4px; }
+  .nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 500; color: var(--text-2);
+    text-decoration: none; cursor: pointer; border: none;
+    background: none; width: 100%; text-align: left;
+    margin-bottom: 3px; transition: background 0.15s, color 0.15s;
+  }
+  .nav-link:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+  .nav-link.active { background: var(--pchu-green); color: #000; font-weight: 700; }
+  .nav-link.active .nav-dot { background: rgba(0,0,0,0.3); }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sidebar-footer {
+    padding: 16px 20px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+    font-size: 10.5px; color: var(--text-4); line-height: 1.5;
+  }
+  /* MAIN */
+  .main { min-height: 100vh; background: var(--bg); }
+  .top-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 48px 20px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .top-header .eyebrow {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--pchu-green); margin-bottom: 6px;
+  }
+  .top-header h1 { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .top-header .meta { font-size: 12px; color: var(--text-3); margin-top: 5px; }
+  .content { padding: 40px 48px 80px; max-width: 100%; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeUp 0.2s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* SECTION */
+  .section-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--pchu-green); margin-bottom: 10px;
+  }
+  .section-hero-title {
+    font-size: 22px; font-weight: 700; color: var(--text);
+    line-height: 1.3; margin-bottom: 12px;
+  }
+  .section-rule { width: 40px; height: 3px; background: var(--pchu-green); border-radius: 2px; margin-bottom: 28px; }
+  .section-title {
+    font-size: 17px; font-weight: 700; color: var(--text);
+    margin-bottom: 8px; margin-top: 36px;
+  }
+  .section-title:first-child { margin-top: 0; }
+  .divider { height: 1px; background: var(--border); margin: 10px 0 20px; }
+  p { color: var(--text-2); margin-bottom: 16px; line-height: 1.75; font-size: 14px; }
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
+  .callout-label {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 7px;
+  }
+  .callout p { margin: 0; font-size: 13.5px; line-height: 1.65; }
+  .callout.green  { background: var(--pchu-green-glow); border-left: 3px solid var(--pchu-green); }
+  .callout.green  .callout-label { color: var(--pchu-green); }
+  .callout.green  p { color: rgba(61,219,106,0.85); }
+  .callout.amber  { background: var(--amber-light); border-left: 3px solid var(--amber); }
+  .callout.amber  .callout-label { color: var(--amber); }
+  .callout.amber  p { color: rgba(224,146,42,0.85); }
+  .callout.red    { background: var(--red-light); border-left: 3px solid var(--red); }
+  .callout.red    .callout-label { color: var(--red); }
+  .callout.red    p { color: rgba(224,90,58,0.85); }
+  .callout.teal   { background: var(--teal-light); border-left: 3px solid var(--teal); }
+  .callout.teal   .callout-label { color: var(--teal); }
+  .callout.teal   p { color: rgba(45,184,138,0.85); }
+  /* ROW GRID */
+  .row-grid {
+    display: grid; grid-template-columns: 160px 1fr;
+    border: 1px solid var(--border);
+    border-radius: 0; margin-bottom: -1px;
+  }
+  .row-grid:first-of-type { border-radius: 10px 10px 0 0; }
+  .row-grid:last-of-type  { border-radius: 0 0 10px 10px; margin-bottom: 0; }
+  .row-grid:only-of-type  { border-radius: 10px; }
+  .row-label-cell {
+    padding: 14px 16px; border-right: 1px solid var(--border);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-3);
+    background: var(--surface-2); display: flex; align-items: flex-start;
+    line-height: 1.4;
+  }
+  .row-body-cell {
+    padding: 14px 18px; font-size: 13.5px;
+    line-height: 1.7; color: var(--text-2);
+    background: var(--surface);
+  }
+  .row-body-cell p { margin: 0; font-size: 13.5px; }
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  .data-table th {
+    background: var(--surface-3); padding: 10px 14px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-3);
+    text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 14px; font-size: 13px; color: var(--text-2);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .data-table-wrap {
+    border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden; margin: 16px 0;
+  }
+  /* STEP CARDS */
+  .step-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    display: grid; grid-template-columns: 52px 1fr;
+  }
+  .step-num {
+    background: var(--surface-3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; color: var(--pchu-green);
+    border-right: 1px solid var(--border);
+  }
+  .step-body { padding: 16px 20px; }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+  .step-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+  .step-path {
+    display: inline-block; margin-top: 8px;
+    font-size: 11px; font-weight: 600; color: var(--pchu-green);
+    background: var(--pchu-green-glow);
+    border: 1px solid rgba(61,219,106,0.2);
+    border-radius: 6px; padding: 3px 10px;
+  }
+  /* CHIP */
+  .chip {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.06); color: var(--text-2);
+    margin: 2px 3px 2px 0;
+  }
+  .chip.green  { background: var(--pchu-green-glow); color: var(--pchu-green); border-color: rgba(61,219,106,0.2); }
+  .chip.amber  { background: var(--amber-light); color: var(--amber); border-color: rgba(224,146,42,0.2); }
+  .chip.teal   { background: var(--teal-light); color: var(--teal); border-color: rgba(45,184,138,0.2); }
+  .chip.red    { background: var(--red-light); color: var(--red); border-color: rgba(224,90,58,0.2); }
+  .chip.blue   { background: var(--blue-light); color: var(--blue); border-color: rgba(74,130,185,0.2); }
+  .chip.purple { background: var(--purple-light); color: var(--purple); border-color: rgba(124,92,191,0.2); }
+  /* VIEW CARDS */
+  .view-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .view-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px;
+    transition: background 0.15s;
+  }
+  .view-card:hover { background: var(--surface-2); }
+  .view-card-num {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-4); margin-bottom: 8px;
+  }
+  .view-card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .view-card-q {
+    font-size: 12px; color: var(--pchu-green); font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .view-card-desc { font-size: 12.5px; color: var(--text-3); line-height: 1.6; }
+  .view-card-path {
+    margin-top: 12px; font-size: 11px; color: var(--text-4);
+    font-family: monospace;
+  }
+  /* KANBAN DEMO */
+  .kanban-demo {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 8px; margin: 16px 0;
+  }
+  .kanban-col { background: var(--surface-2); border-radius: 8px; overflow: hidden; }
+  .kanban-col-header {
+    padding: 8px 12px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .kanban-col-body { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+  .kanban-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 10px;
+    font-size: 11.5px; color: var(--text-2); line-height: 1.4;
+  }
+  .kanban-card .assignee {
+    font-size: 10px; color: var(--text-4); margin-top: 4px;
+  }
+  /* WORKSPACE OVERVIEW */
+  .ws-overview {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin: 16px 0;
+  }
+  .ws-header {
+    padding: 14px 20px; background: var(--surface-3);
+    border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-3);
+  }
+  .ws-row {
+    display: grid; grid-template-columns: 240px 1fr 120px 120px;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px; align-items: center; gap: 16px;
+    transition: background 0.15s;
+  }
+  .ws-row:last-child { border-bottom: none; }
+  .ws-row:hover { background: rgba(255,255,255,0.03); }
+  .ws-row-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .ws-row-type { font-size: 11px; color: var(--text-4); margin-top: 2px; }
+  .ws-progress-bar {
+    height: 4px; background: var(--surface-3); border-radius: 2px;
+    overflow: hidden;
+  }
+  .ws-progress-fill { height: 100%; border-radius: 2px; }
+  .ws-progress-label { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+  .ws-badge {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  /* RULE CARDS */
+  .rule-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+  .rule-item {
+    display: grid; grid-template-columns: 28px 1fr;
+    gap: 14px; align-items: flex-start;
+  }
+  .rule-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; flex-shrink: 0; margin-top: 2px;
+  }
+  .rule-dot.green { background: var(--pchu-green-glow); color: var(--pchu-green); border: 1.5px solid var(--pchu-green); }
+  .rule-dot.amber { background: var(--amber-light); color: var(--amber); border: 1.5px solid var(--amber); }
+  .rule-dot.red   { background: var(--red-light); color: var(--red); border: 1.5px solid var(--red); }
+  .rule-body .rule-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .rule-body .rule-desc  { font-size: 13px; color: var(--text-3); line-height: 1.6; }
+  /* QUICK REF */
+  .qref-table { width: 100%; }
+  .qref-table tr td:first-child {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    width: 40%; padding: 11px 14px;
+  }
+  .qref-table tr td:last-child {
+    font-size: 12px; color: var(--text-3); padding: 11px 14px;
+    font-family: monospace;
+  }
+  /* HAMBURGER */
+  .hamburger-btn {
+    display: none; position: fixed; top: 16px; right: 16px;
+    z-index: 200; width: 40px; height: 40px; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    cursor: pointer; align-items: center; justify-content: center;
+    flex-direction: column; gap: 5px; padding: 0;
+  }
+  .hamburger-btn span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.2s ease; }
+  .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 149; }
+  .mobile-overlay.visible { display: block; }
+  @media (max-width: 768px) {
+    .shell { grid-template-columns: 1fr; }
+    .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100vh; z-index: 150; transition: left 0.25s ease; }
+    .sidebar.mobile-open { left: 0; }
+    .hamburger-btn { display: flex; }
+    .content { padding: 24px 20px 60px; }
+    .top-header { padding: 16px 20px; padding-right: 60px; }
+    .view-cards { grid-template-columns: 1fr; }
+    .kanban-demo { grid-template-columns: repeat(3, 1fr); }
+    .ws-row { grid-template-columns: 1fr 1fr; }
+  }
+  .glosario-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:300; align-items:center; justify-content:center; padding:20px; }
+  .glosario-overlay.visible { display:flex; }
+  .glosario-modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; width:100%; max-width:560px; max-height:82vh; overflow-y:auto; position:relative; }
+  .glosario-header { padding:20px 24px 16px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); z-index:1; display:flex; align-items:center; justify-content:space-between; }
+  .glosario-eyebrow { font-size:9px; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; color:var(--pchu-green); margin-bottom:4px; }
+  .glosario-title { font-size:16px; font-weight:700; color:var(--text); }
+  .glosario-close { width:32px; height:32px; border-radius:8px; background:var(--surface-2); border:1px solid var(--border); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; color:var(--text-3); flex-shrink:0; }
+  .glosario-close:hover { background:var(--surface-3); color:var(--text); }
+  .glosario-body { padding:8px 0 16px; }
+  .glosario-item { padding:16px 24px; border-bottom:1px solid var(--border); }
+  .glosario-item:last-child { border-bottom:none; }
+  .glosario-item-top { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; }
+  .glosario-abbr { font-size:12px; font-weight:800; color:var(--pchu-green); letter-spacing:0.08em; flex-shrink:0; background:var(--pchu-green-glow); padding:2px 8px; border-radius:6px; }
+  .glosario-full { font-size:13px; font-weight:600; color:var(--text); }
+  .glosario-desc { font-size:12.5px; color:var(--text-2); line-height:1.6; margin-bottom:6px; }
+  .glosario-why { font-size:11.5px; color:var(--pchu-green); line-height:1.5; font-style:italic; padding-left:10px; border-left:2px solid rgba(61,219,106,0.3); }
+  .glosario-fab { position:fixed; bottom:24px; right:24px; z-index:100; background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:8px 14px; font-size:11px; font-weight:700; color:var(--pchu-green); cursor:pointer; letter-spacing:0.08em; text-transform:uppercase; display:flex; align-items:center; gap:6px; box-shadow:0 4px 20px rgba(0,0,0,0.4); }
+  .glosario-fab:hover { background:var(--surface-2); }
+  .glosario-fab-dot { width:6px; height:6px; border-radius:50%; background:var(--pchu-green); }
+</style>
+</head>
+<body>
+
+<button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileMenu()">
+  <span></span><span></span><span></span>
+</button>
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">P</div>
+      <div>
+        <div class="org">Mainframe</div>
+        <div class="product">Manual · Plane</div>
+        <div class="subtitle">v1.0 · 2026</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-section">Fundamentos</div>
+      <a class="nav-link active" onclick="showTab('intro')">
+        <div class="nav-dot" style="background:var(--pchu-green)"></div>
+        Introducción
+      </a>
+      <a class="nav-link" onclick="showTab('porque')">
+        <div class="nav-dot" style="background:var(--teal)"></div>
+        ¿Por qué esto importa?
+      </a>
+      <a class="nav-link" onclick="showTab('tipos')">
+        <div class="nav-dot" style="background:var(--amber)"></div>
+        Tipos de operación
+      </a>
+      <a class="nav-link" onclick="showTab('workspace')">
+        <div class="nav-dot" style="background:var(--blue)"></div>
+        Workspace
+      </a>
+
+      <div class="nav-section">Proyectos de iniciativa</div>
+      <a class="nav-link" onclick="showTab('estructura')">
+        <div class="nav-dot" style="background:var(--teal)"></div>
+        Estructura y fases
+      </a>
+      <a class="nav-link" onclick="showTab('crear')">
+        <div class="nav-dot" style="background:var(--purple)"></div>
+        Crear un proyecto
+      </a>
+      <a class="nav-link" onclick="showTab('vistas')">
+        <div class="nav-dot" style="background:var(--pchu-green)"></div>
+        Las 4 vistas
+      </a>
+      <a class="nav-link" onclick="showTab('replicar')">
+        <div class="nav-dot" style="background:var(--teal)"></div>
+        Replicar proyectos
+      </a>
+
+      <div class="nav-section">Cross-functional Ops</div>
+      <a class="nav-link" onclick="showTab('cross_estructura')">
+        <div class="nav-dot" style="background:var(--purple)"></div>
+        Estructura y roles
+      </a>
+      <a class="nav-link" onclick="showTab('operacion')">
+        <div class="nav-dot" style="background:var(--purple)"></div>
+        Cómo configurarlo
+      </a>
+
+      <div class="nav-section">Área Ops</div>
+      <a class="nav-link" onclick="showTab('area_estructura')">
+        <div class="nav-dot" style="background:var(--amber)"></div>
+        Estructura y roles
+      </a>
+      <a class="nav-link" onclick="showTab('crecer')">
+        <div class="nav-dot" style="background:var(--amber)"></div>
+        Cómo configurarlo
+      </a>
+
+      <div class="nav-section">Reglas generales</div>
+      <a class="nav-link" onclick="showTab('reglas')">
+        <div class="nav-dot" style="background:var(--red)"></div>
+        Reglas del equipo
+      </a>
+
+      <div class="nav-section">Referencia</div>
+      <a class="nav-link" onclick="showTab('quickref')">
+        <div class="nav-dot" style="background:var(--text-3)"></div>
+        Referencia rápida
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      Uso interno · Mainframe<br>
+      <span style="color:var(--text-4); font-size:10px;">Gestión de proyectos · Plane</span>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="top-header">
+      <div class="eyebrow">Manual de gestión de proyectos · Plane</div>
+      <h1 id="page-title">Introducción</h1>
+      <div class="meta">Mainframe · 2026 · <span style="color:var(--pchu-green); font-weight:600;">Interno</span></div>
+    </header>
+
+    <div class="content">
+
+      <!-- ── INTRO ── -->
+      <div id="tab-intro" class="tab-content active">
+        <div class="section-eyebrow">Empezar aquí</div>
+        <div class="section-hero-title">La evolución del sistema.<br>Cómo Mainframe gestiona la operación en Plane.</div>
+        <div class="section-rule"></div>
+
+        <p>Este manual define cómo el equipo Mainframe gestiona su trabajo en Plane: tanto los proyectos multidisciplinarios con fecha de cierre como la operación diaria de cada área. Su objetivo es reemplazar el seguimiento informal, en correos, Words o Excels, por un sistema claro y centralizado que cualquier área pueda usar.</p>
+
+        <div class="section-title">Objetivos estratégicos</div>
+        <div class="divider"></div>
+
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Trazabilidad</div>
+          <div class="row-body-cell"><p>Todo compromiso, tarea y decisión queda registrado. Se puede saber en cualquier momento qué se hizo, quién lo hizo y cuándo. Sin depender de la memoria de nadie.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Eficiencia</div>
+          <div class="row-body-cell"><p>Menos tiempo coordinando, preguntando y buscando información. Cada persona sabe exactamente qué tiene que hacer y el equipo sabe en qué está cada iniciativa sin tener que preguntar.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Predictibilidad</div>
+          <div class="row-body-cell"><p>Con fechas, responsables y estados actualizados, es posible anticipar retrasos, identificar cuellos de botella y tomar decisiones antes de que los problemas escalen.</p></div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">El cambio de mindset</div>
+        <div class="divider"></div>
+
+        <div class="row-grid">
+          <div class="row-label-cell">Antes</div>
+          <div class="row-body-cell"><p>Proyectos multidisciplinarios sin cronograma, sin responsables claros, sin status real. El avance vivía en conversaciones informales o en documentos dispersos. La operación diaria de cada área tampoco tenía un lugar común donde vivir.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Después</div>
+          <div class="row-body-cell"><p>Cada proyecto tiene fases, tareas, responsables y fechas. El % de avance es visible en tiempo real. La operación diaria de cada área tiene su propio kanban. Los proyectos terminados quedan como plantilla para replicar.</p></div>
+        </div>
+
+        <div class="callout amber" style="margin-top:24px;">
+          <div class="callout-label">El cambio más importante</div>
+          <p>El equipo de Mainframe no ha usado herramientas de gestión de proyectos antes. Eso significa que el primer paso no es aprender Plane, sino cambiar la forma de trabajar: pasar de "yo sé lo que tengo que hacer" a "lo que no está en Plane no existe".</p>
+        </div>
+
+        <div class="callout green" style="margin-top:12px;">
+          <div class="callout-label">La regla más importante</div>
+          <p>Si no está en Plane, no existe. Cualquier compromiso, fecha o acuerdo que no esté registrado como tarea no puede ser exigido ni medido.</p>
+        </div>
+      </div>
+
+      <!-- ── POR QUÉ IMPORTA ── -->
+      <div id="tab-porque" class="tab-content">
+        <div class="section-eyebrow">Contexto</div>
+        <div class="section-hero-title">¿Por qué esto importa?<br>El sistema no es el fin, es el medio.</div>
+        <div class="section-rule"></div>
+
+        <p>Plane no es una herramienta de control. Es la infraestructura que permite que Mainframe opere con claridad a medida que crece. Sin un sistema, cada área inventa su propia forma de trabajar y el conocimiento queda atrapado en personas, no en procesos.</p>
+
+        <div class="section-title">Lo que cambia para cada rol</div>
+        <div class="divider"></div>
+
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Gerencia</div>
+          <div class="row-body-cell"><p>Visibilidad real del estado de todas las iniciativas sin tener que preguntar. Puede tomar decisiones basadas en datos, no en percepciones.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--amber);">Líderes de área</div>
+          <div class="row-body-cell"><p>Claridad sobre la carga de su equipo, los bloqueantes activos y el avance de sus proyectos. Menos reuniones de seguimiento, más tiempo ejecutando.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--blue);">Equipo</div>
+          <div class="row-body-cell"><p>Cada persona sabe exactamente qué se espera de ella, cuándo y con qué criterio. Menos ambigüedad, menos interrupciones, más foco.</p></div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">Lo que NO cambia</div>
+        <div class="divider"></div>
+
+        <p>Plane no reemplaza la comunicación entre personas. Las reuniones, las decisiones y las conversaciones de contexto siguen siendo necesarias. Lo que cambia es que los acuerdos que salen de esas conversaciones quedan registrados como tareas, no se pierden en un chat.</p>
+
+        <div class="section-title" style="margin-top:28px;">Por qué ahora</div>
+        <div class="divider"></div>
+
+        <p>Mainframe está en un momento de transformación. Las iniciativas buscan generar mayor impacto, involucran más áreas y personas y tienen más dependencias. Sin un sistema, ese crecimiento genera caos. Con un sistema, genera escala.</p>
+
+        <div class="callout teal">
+          <div class="callout-label">La apuesta</div>
+          <p>No se trata de llenar formularios ni de burocracia. Se trata de que el trabajo de Mainframe sea visible, medible y replicable. Ese es el estándar al que apuntamos.</p>
+        </div>
+      </div>
+
+      <!-- ── TIPOS DE OPERACIÓN ── -->
+      <div id="tab-tipos" class="tab-content">
+        <div class="section-eyebrow">Fundamentos</div>
+        <div class="section-hero-title">Tres tipos de operación.<br>Tres lugares distintos en Plane.</div>
+        <div class="section-rule"></div>
+
+        <!-- PREGUNTA DIAGNÓSTICA -->
+        <div class="callout amber" style="margin-bottom:28px;">
+          <div class="callout-label">¿No sabes cuál te aplica? Responde esto primero.</div>
+          <p>· ¿Hay una fecha de lanzamiento y alguien fuera de tu área espera el resultado? → <strong style="color:var(--pchu-green)">Proyecto con cierre.</strong></p>
+          <p style="margin-top:6px;">· ¿Es un ritual que se repite con varias áreas y un owner fijo? → <strong style="color:var(--pchu-green)">Cross-functional Ops.</strong></p>
+          <p style="margin-top:6px;">· ¿Es trabajo interno de tu área, sin dependencias externas? → <strong style="color:var(--pchu-green)">Área Ops.</strong></p>
+        </div>
+
+        <!-- TIPO 1 -->
+        <div class="section-title">Proyecto con cierre</div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Características</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Tiene fecha de lanzamiento definida</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Involucra más de un área</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Entregable único con inicio y fin claro</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Alguien fuera del área espera el resultado</div>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Ejemplos en Mainframe</div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-2);">
+              <div>· Lanzamiento de una promo</div>
+              <div>· Integración con un nuevo proveedor</div>
+              <div>· Campaña comercial o de marketing</div>
+              <div>· Rediseño completo de tienda</div>
+              <div>· Activación de campaña con aliado</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(61,219,106,0.2);border-radius:12px;padding:16px 20px;margin-bottom:8px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--pchu-green);margin-bottom:10px;">Documentos — solo para proyectos con cierre</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:grid;grid-template-columns:210px 1fr;gap:12px;align-items:start;">
+              <span class="chip green" style="text-align:center;">Template · Brief</span>
+              <span style="font-size:12px;color:var(--text-2);">Una vez aprobada la propuesta. Define objetivo, áreas, requerimientos, dependencias y alcance antes de arrancar. <a href="https://docs.google.com/document/d/1wPQg-gWrW0SI5D1yEf6PBvU21q22bqqL/edit?usp=share_link&ouid=105452615429283675991&rtpof=true&sd=true" style="color:var(--pchu-green);">Ver en Drive →</a></span>
+            </div>
+            <div style="height:1px;background:var(--border);"></div>
+            <div style="display:grid;grid-template-columns:210px 1fr;gap:12px;align-items:center;">
+              <span class="chip" style="background:rgba(255,255,255,0.06);color:var(--text-3);text-align:center;">Template · Retroalimentación</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:12px;color:var(--text-2);">Al cerrar el proyecto. Documenta si se cumplió el objetivo, qué funcionó, qué no y qué ajustar para la próxima vez.</span>
+                <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--border);white-space:nowrap;cursor:not-allowed;opacity:0.5;">Pendiente</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIPO 2 -->
+        <div class="section-title" style="margin-top:32px;">Cross-functional Ops</div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Características</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Sin fecha de cierre; existe mientras el ritual exista</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Varias áreas, un owner fijo que decide y publica</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Entregable recurrente; el mismo proceso cada sprint</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>No necesita propuesta ni aprobación de gerencia</div>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Ejemplos en Mainframe</div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-2);">
+              <div>· Rituales de Producto</div>
+              <div>· Documentación de experiencias core</div>
+              <div>· Gestión de alianzas y beneficios end to end</div>
+              <div>· Revisión semanal de métricas</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(124,92,191,0.2);border-radius:12px;padding:16px 20px;margin-bottom:8px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple);margin-bottom:10px;">Lo que necesita para arrancar</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;">
+              <span class="chip purple" style="text-align:center;">Guía del ritual</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:12px;color:var(--text-2);">Propósito, frecuencia, rol de cada área y entregable esperado por sprint. Es el README del proyecto. La crea el owner en Plane Pages.</span>
+                <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--border);white-space:nowrap;cursor:not-allowed;opacity:0.5;">Pendiente</span>
+              </div>
+            </div>
+            <div style="height:1px;background:var(--border);"></div>
+            <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;">
+              <span class="chip purple" style="text-align:center;">Guía de procesos</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:12px;color:var(--text-2);">Documenta los procesos del ritual paso a paso. Se construye en la marcha, coordinado con Natalia. Ej: cómo Soporte consolida reclamos, cómo Tech levanta reglas de negocio.</span>
+                <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--border);white-space:nowrap;cursor:not-allowed;opacity:0.5;">Pendiente</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout amber">
+          <div class="callout-label">Sin template en Drive</div>
+          <p>Los Cross-functional Ops no usan template de propuesta ni brief. La guía del ritual y la guía de procesos las crea el owner directamente en Plane Pages, dentro del proyecto del ritual.</p>
+        </div>
+
+        <!-- TIPO 3 -->
+        <div class="section-title" style="margin-top:32px;">Área Ops</div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Características</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Un solo equipo, sin dependencia de otras áreas</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Trabajo continuo y recurrente, sin fecha de cierre</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>Cada área tiene su propio kanban en Plane</div>
+              <div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text-2);"><span style="color:var(--pchu-green);font-weight:700;flex-shrink:0;">→</span>No necesita propuesta ni aprobación de gerencia</div>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px;">Ejemplos en Mainframe</div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-2);">
+              <div>· Dev: bugs, mejoras técnicas, deuda técnica</div>
+              <div>· Diseño: piezas, activos, revisiones</div>
+              <div>· Marketing: contenido semanal, pauta, reportes</div>
+              <div>· Comercial: seguimiento de cuentas, aliados</div>
+              <div>· Soporte: reclamos, consultas, escalamientos</div>
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(224,146,42,0.2);border-radius:12px;padding:16px 20px;margin-bottom:8px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;">Lo que necesita para arrancar</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;">
+              <span class="chip amber" style="text-align:center;">Guía del área</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:12px;color:var(--text-2);">Qué hace el área, quiénes la integran y cómo se prioriza el trabajo. Punto de entrada para cualquier persona nueva. La crea el lead del área en Plane Pages.</span>
+                <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--border);white-space:nowrap;cursor:not-allowed;opacity:0.5;">Pendiente</span>
+              </div>
+            </div>
+            <div style="height:1px;background:var(--border);"></div>
+            <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;">
+              <span class="chip amber" style="text-align:center;">Guía de procesos</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:12px;color:var(--text-2);">Procesos del área documentados paso a paso. Se construye en la marcha, coordinado con Natalia. Ej en Dev: cómo reportar un bug, cómo hacer un deploy.</span>
+                <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.04);color:var(--text-3);border:1px solid var(--border);white-space:nowrap;cursor:not-allowed;opacity:0.5;">Pendiente</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="callout amber">
+          <div class="callout-label">Sin template en Drive</div>
+          <p>El Área Ops no usa template de propuesta ni brief. La guía del área y la guía de procesos se crean en Plane Pages dentro del proyecto del área. La documentación de procesos se coordina con Natalia.</p>
+        </div>
+
+      </div>
+      <!-- ── WORKSPACE ── -->
+      <div id="tab-workspace" class="tab-content">
+        <div class="section-eyebrow">Arquitectura</div>
+        <div class="section-hero-title">Un workspace.<br>Proyectos separados por área, ritual e iniciativa.</div>
+        <div class="section-rule"></div>
+
+        <p>Todo el equipo Mainframe vive en un solo workspace. Dentro de ese workspace, cada área tiene su propio proyecto de operación, cada ritual recurrente con varias áreas tiene su propio proyecto de Cross-functional Ops, y cada iniciativa temporal tiene su propio proyecto.</p>
+
+        <div class="ws-overview">
+          <div class="ws-header">Workspace · Mainframe: vista de proyectos</div>
+
+          <div class="ws-row">
+            <div>
+              <div class="ws-row-name">🚀 Dev · Operación</div>
+              <div class="ws-row-type">Operación continua</div>
+            </div>
+            <div>
+              <div class="ws-progress-bar"><div class="ws-progress-fill" style="width:100%; background:var(--teal)"></div></div>
+              <div class="ws-progress-label">Rolling · sin cierre</div>
+            </div>
+            <div></div>
+            <div style="font-size:12px; color:var(--text-4)">Dev</div>
+          </div>
+
+          <div class="ws-row">
+            <div>
+              <div class="ws-row-name">⚡ Mario Madness</div>
+              <div class="ws-row-type">Iniciativa · experiencia</div>
+            </div>
+            <div>
+              <div class="ws-progress-bar"><div class="ws-progress-fill" style="width:60%; background:var(--pchu-green)"></div></div>
+              <div class="ws-progress-label">60% completado</div>
+            </div>
+            <div></div>
+            <div style="font-size:12px; color:var(--text-4)">Cross-funcional</div>
+          </div>
+
+          <div class="ws-row">
+            <div>
+              <div class="ws-row-name">📋 Producto · Documentación de flujos</div>
+              <div class="ws-row-type">Cross-functional Ops · ritual semanal</div>
+            </div>
+            <div>
+              <div class="ws-progress-bar"><div class="ws-progress-fill" style="width:0%; background:var(--purple)"></div></div>
+              <div class="ws-progress-label">0% completado</div>
+            </div>
+            <div></div>
+            <div style="font-size:12px; color:var(--text-4)">Producto · owner</div>
+          </div>
+        </div>
+
+        <div class="callout teal">
+          <div class="callout-label">Modelo de crecimiento</div>
+          <p>No configuraremos Plane para todas las áreas de una vez. Conforme se vaya documentando y organizando la operación, se suman proyectos. El sistema no necesita rediseñarse para crecer.</p>
+        </div>
+
+        <div class="section-title" style="margin-top:32px;">Organización en Google Drive</div>
+        <div class="divider"></div>
+
+        <p>Los documentos de soporte del sistema viven en Google Drive, organizados por tipo de operación. Plane es el sistema de gestión del trabajo; Drive es el repositorio de templates, guías y documentos que lo acompañan.</p>
+
+        <div style="margin:16px 0;">
+          <div class="ws-header" style="border-radius:10px 10px 0 0;padding:12px 20px;background:var(--surface-3);border:1px solid var(--border);border-bottom:none;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);">Drive · Inventario de operaciones y proyectos</div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:0 0 10px 10px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+
+            <a href="https://docs.google.com/spreadsheets/d/1AsMo4DSTN3t3nhw6NrBrr5z4QkehYfVj/edit?usp=share_link&ouid=105452615429283675991&rtpof=true&sd=true" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:20px;">📊</span>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--text);">Pipeline de iniciativas</div>
+                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Google Sheet · iniciativas en evaluación, aprobadas y rechazadas</div>
+                </div>
+              </div>
+              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
+            </a>
+
+            <a href="https://drive.google.com/drive/folders/18LCkOFruh_bu3Z67mgyMe2Hkt2hpbspl?usp=share_link" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:20px;">📁</span>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--text);">Proyectos con cierre</div>
+                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carpeta · una subcarpeta por iniciativa: propuesta, brief y retroalimentación</div>
+                </div>
+              </div>
+              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
+            </a>
+
+            <a href="https://drive.google.com/drive/folders/1ys7Zmx9k94blTM5xonJ3T6GkrEPYesry?usp=share_link" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:20px;">📁</span>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--text);">Cross-functional Ops</div>
+                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carpeta · una subcarpeta por proyecto: guía del ritual, guía de procesos y entregables</div>
+                </div>
+              </div>
+              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
+            </a>
+
+            <a href="https://drive.google.com/drive/folders/1nJR3acFi4ZyONJtW8VtcZVwzFlq1cjyK?usp=share_link" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:20px;">📁</span>
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--text);">Área Ops</div>
+                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carpeta · una subcarpeta por área: guía del área y guía de procesos</div>
+                </div>
+              </div>
+              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
+            </a>
+
+          </div>
+        </div>
+
+        <div class="callout green">
+          <div class="callout-label">Dónde está el manual</div>
+          <p>Este manual vive como landing web y su link está en la descripción del Drive. Es el punto de entrada para cualquier persona nueva al sistema.</p>
+        </div>
+      </div>
+
+      <!-- ── ESTRUCTURA ── -->
+      <div id="tab-estructura" class="tab-content">
+        <div class="section-eyebrow">Proyectos de iniciativa</div>
+        <div class="section-hero-title">Cómo se construye<br>un proyecto de iniciativa.</div>
+        <div class="section-rule"></div>
+
+        <p>Cada proyecto en Plane tiene tres capas. Las tres son necesarias para que las vistas funcionen bien.</p>
+
+        <div class="section-title">Capa 1 · Fases del proyecto</div>
+        <div class="divider"></div>
+        <p>Cada proyecto tiene un responsable general (Project Lead) que es quien lo crea, lo mantiene actualizado y responde por su avance. Una vez aprobada la propuesta de iniciativa, el proyecto arranca en Plane desde la Fase 1.</p>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 20px;">
+          <span class="chip amber">1 · Brief</span>
+          <span style="color:var(--text-4); align-self:center;">→</span>
+          <span class="chip blue">2 · Ejecución</span>
+          <span style="color:var(--text-4); align-self:center;">→</span>
+          <span class="chip teal">3 · Retroalimentación</span>
+        </div>
+
+        <div class="data-table-wrap" style="margin-bottom:20px;">
+          <table class="data-table">
+            <thead><tr><th>Fase</th><th>Contenido mínimo</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="vertical-align:top; padding-top:16px;">
+                  <span class="chip amber">1 · Brief</span><br>
+                  <a href="https://docs.google.com/document/d/1wPQg-gWrW0SI5D1yEf6PBvU21q22bqqL/edit?usp=share_link&ouid=105452615429283675991&rtpof=true&sd=true" target="_blank" style="font-size:11px; color:var(--pchu-green); text-decoration:none; margin-top:6px; display:inline-block;">Ver template →</a>
+                </td>
+                <td style="font-size:13px; color:var(--text-2); line-height:1.9;">
+                  · Objetivo claro de la iniciativa<br>
+                  · Áreas involucradas y sus roles<br>
+                  · Requerimientos por área<br>
+                  · Dependencias entre áreas<br>
+                  · Fecha estimada de lanzamiento<br>
+                  · Responsable del proyecto
+                </td>
+              </tr>
+              <tr>
+                <td style="vertical-align:top; padding-top:16px;">
+                  <span class="chip blue">2 · Ejecución</span>
+                </td>
+                <td style="font-size:13px; color:var(--text-2); line-height:1.9;">
+                  · Tareas creadas en Plane con responsable y fecha<br>
+                  · Estado actualizado semanalmente<br>
+                  · Bloqueantes documentados con su desbloqueante<br>
+                  · Avance visible en kanban
+                </td>
+              </tr>
+              <tr>
+                <td style="vertical-align:top; padding-top:16px;">
+                  <span class="chip teal">3 · Retroalimentación</span><br>
+                  <span style="font-size:11px; color:var(--text-4); margin-top:6px; display:inline-block; opacity:0.5; cursor:not-allowed;">Pendiente</span>
+                </td>
+                <td style="font-size:13px; color:var(--text-2); line-height:1.9;">
+                  · ¿Se cumplió el objetivo?<br>
+                  · ¿Qué funcionó y qué no?<br>
+                  · Ajustes a la plantilla para la próxima vez<br>
+                  · Registro cerrado en Plane
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+<div class="section-title">Capa 2 · Tareas = Entregables</div>
+        <div class="divider"></div>
+        <p>Cada tarea debe tener estos cuatro campos obligatoriamente. Sin ellos, las vistas no funcionan.</p>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Campo</th><th>Qué poner</th><th>Ejemplo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong style="color:var(--text)">Título</strong></td><td>Acción concreta y específica</td><td>Firmar contrato con Yape</td></tr>
+              <tr><td><strong style="color:var(--text)">Responsable</strong></td><td>Una sola persona (no un área)</td><td>Natalia Solís</td></tr>
+              <tr><td><strong style="color:var(--text)">Fecha de entrega</strong></td><td>Fecha límite real</td><td>27/03/2026</td></tr>
+              <tr><td><strong style="color:var(--text)">Estado</strong></td><td>Estado actual de la tarea</td><td>In Progress</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Capa 3 · Estados del kanban</div>
+        <div class="divider"></div>
+
+        <div style="display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; margin:16px 0 24px;">
+
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-top:3px solid var(--text-3); border-radius:0 0 8px 8px; overflow:hidden;">
+            <div style="padding:10px 12px; border-bottom:1px solid var(--border);">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-3);">Backlog</div>
+            </div>
+            <div style="padding:10px 12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px;">
+                <div style="font-size:11px; color:var(--text-2); line-height:1.4;">Tarea identificada</div>
+                <div style="font-size:10px; color:var(--text-4); margin-top:4px;">Sin priorizar aún</div>
+              </div>
+              <div style="font-size:11px; color:var(--text-4); line-height:1.5; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">Identificada, sin prioridad. Puede necesitar más contexto.</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-top:3px solid var(--blue); border-radius:0 0 8px 8px; overflow:hidden;">
+            <div style="padding:10px 12px; border-bottom:1px solid var(--border);">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue);">Todo</div>
+            </div>
+            <div style="padding:10px 12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px;">
+                <div style="font-size:11px; color:var(--text-2); line-height:1.4;">Tarea priorizada</div>
+                <div style="font-size:10px; color:var(--text-4); margin-top:4px;">Lista para iniciar</div>
+              </div>
+              <div style="font-size:11px; color:var(--text-4); line-height:1.5; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">Priorizada y lista. Alguien la tomará en el corto plazo.</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-top:3px solid var(--amber); border-radius:0 0 8px 8px; overflow:hidden;">
+            <div style="padding:10px 12px; border-bottom:1px solid var(--border);">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--amber);">In Progress</div>
+            </div>
+            <div style="padding:10px 12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px;">
+                <div style="font-size:11px; color:var(--text-2); line-height:1.4;">Tarea activa</div>
+                <div style="font-size:10px; color:var(--amber); margin-top:4px;">Natalia S.</div>
+              </div>
+              <div style="font-size:11px; color:var(--text-4); line-height:1.5; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">Alguien trabaja activamente en ella ahora mismo.</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-top:3px solid var(--pchu-green); border-radius:0 0 8px 8px; overflow:hidden;">
+            <div style="padding:10px 12px; border-bottom:1px solid var(--border);">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--pchu-green);">Done</div>
+            </div>
+            <div style="padding:10px 12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px;">
+                <div style="font-size:11px; color:var(--text-2); line-height:1.4;">Tarea completada</div>
+                <div style="font-size:10px; color:var(--pchu-green); margin-top:4px;">Validada</div>
+              </div>
+              <div style="font-size:11px; color:var(--text-4); line-height:1.5; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">Completada y validada. No requiere más acción.</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-top:3px solid var(--red); border-radius:0 0 8px 8px; overflow:hidden;">
+            <div style="padding:10px 12px; border-bottom:1px solid var(--border);">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--red);">Bloqueado</div>
+            </div>
+            <div style="padding:10px 12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-left:2px solid var(--red); border-radius:6px; padding:8px 10px; margin-bottom:6px;">
+                <div style="font-size:11px; color:var(--text-2); line-height:1.4;">Tarea detenida</div>
+                <div style="font-size:10px; color:var(--red); margin-top:4px;">Espera decisión</div>
+              </div>
+              <div style="font-size:11px; color:var(--text-4); line-height:1.5; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">No puede avanzar. Indicar en comentarios qué la desbloquea.</div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface-2); border:1px solid var(--border); border-top:3px solid var(--text-4); border-radius:0 0 8px 8px; overflow:hidden;">
+            <div style="padding:10px 12px; border-bottom:1px solid var(--border);">
+              <div style="font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-4);">Cancelled</div>
+            </div>
+            <div style="padding:10px 12px;">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 10px; margin-bottom:6px; opacity:0.5;">
+                <div style="font-size:11px; color:var(--text-3); line-height:1.4; text-decoration:line-through;">Tarea descartada</div>
+                <div style="font-size:10px; color:var(--text-4); margin-top:4px;">Ya no aplica</div>
+              </div>
+              <div style="font-size:11px; color:var(--text-4); line-height:1.5; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">Descartada. Las tareas en Done o Cancelled pueden archivarse para limpiar el tablero.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── CREAR PROYECTO ── -->
+      <div id="tab-crear" class="tab-content">
+        <div class="section-eyebrow">Paso a paso</div>
+        <div class="section-hero-title">Crea un proyecto<br>en 10 minutos.</div>
+        <div class="section-rule"></div>
+
+        <div class="callout amber">
+          <div class="callout-label">Orden importante</div>
+          <p>Primero los estados, luego los módulos, luego las tareas. Si cargas tareas antes de tener los estados definidos, deberás reclasificarlas todas después.</p>
+        </div>
+
+        <div class="step-list" style="margin-top:20px;">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Crear el proyecto</div>
+              <div class="step-desc">En el sidebar izquierdo crea un nuevo proyecto. Ponle el nombre de la iniciativa, por ejemplo "Habilitación Yape Recurrente".</div>
+              <span class="step-path">Sidebar → Projects → New project</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Verificar y agregar estados</div>
+              <div class="step-desc">Plane crea por defecto <span class="chip">Backlog</span><span class="chip blue">Todo</span><span class="chip amber">In Progress</span><span class="chip green">Done</span><span class="chip" style="background:rgba(255,255,255,0.06);color:var(--text-3);">Cancelled</span>. Solo necesitas agregar <span class="chip red">Bloqueado</span> manualmente.</div>
+              <span class="step-path">Proyecto → Settings → States → + nuevo estado</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Invitar a los miembros</div>
+              <div class="step-desc">Agrega a todos los que participan en el proyecto, no solo Dev; también Comercial, Marketing y UX. Sin membresía no pueden ser asignados a tareas ni ver el kanban.</div>
+              <span class="step-path">Proyecto → Settings → Members → Invite</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Crear las tareas</div>
+              <div class="step-desc">Crea las tareas del proyecto. Cada tarea debe tener título, responsable, fecha y estado desde el momento en que se crea. Sin estos 4 campos, la tarea no es útil.</div>
+              <span class="step-path">Proyecto → Work Items → Add issue</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Activar las vistas</div>
+              <div class="step-desc">En Work Items cambia entre Board view para el kanban y Gantt view para la línea de tiempo. Para ver tareas por persona usa Your work desde el workspace.</div>
+              <span class="step-path">Proyecto → Work Items → cambiar vista</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">Checklist para una tarea bien creada</div>
+        <div class="divider"></div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Título</div>
+          <div class="row-body-cell"><p>¿Empieza con un verbo? ¿Dice exactamente qué hay que hacer?</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Responsable</div>
+          <div class="row-body-cell"><p>¿Es una sola persona, no un área o un equipo?</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Fecha</div>
+          <div class="row-body-cell"><p>¿Tiene fecha de entrega? ¿Aunque sea tentativa?</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Estado</div>
+          <div class="row-body-cell"><p>¿Refleja el estado real actual, no el estado deseado?</p></div>
+        </div>
+      </div>
+
+      <!-- ── VISTAS ── -->
+      <div id="tab-vistas" class="tab-content">
+        <div class="section-eyebrow">Visibilidad</div>
+        <div class="section-hero-title">Las 4 vistas que necesitas.<br>Cada una responde una pregunta distinta.</div>
+        <div class="section-rule"></div>
+
+        <div class="view-cards">
+          <div class="view-card">
+            <div class="view-card-num">Vista 1</div>
+            <div class="view-card-title">Estado general de proyectos</div>
+            <div class="view-card-q">"¿En qué % estamos en cada iniciativa?"</div>
+            <div class="view-card-desc">Lista de todos los proyectos activos con su porcentaje de avance calculado automáticamente. De un vistazo sabes qué está sano y qué está atrasado.</div>
+            <div class="view-card-path">Workspace → Projects</div>
+          </div>
+          <div class="view-card">
+            <div class="view-card-num">Vista 2</div>
+            <div class="view-card-title">Kanban por proyecto</div>
+            <div class="view-card-q">"¿Qué está haciendo el equipo esta semana?"</div>
+            <div class="view-card-desc">Columnas por estado, tarjetas con responsable y fecha. Esta es la vista del día a día del equipo en sus reuniones de seguimiento.</div>
+            <div class="view-card-path">Proyecto → Work Items → Board view</div>
+          </div>
+          <div class="view-card">
+            <div class="view-card-num">Vista 3</div>
+            <div class="view-card-title">Mis tareas (por persona)</div>
+            <div class="view-card-q">"¿Qué tengo que hacer yo hoy?"</div>
+            <div class="view-card-desc">Muestra todas las tareas asignadas a esa persona, de todos los proyectos donde participa, tanto de operación como de iniciativas. Si eres de YNC pero tienes una tarea en un proyecto de iniciativa, aparece aquí junto a tus tareas de YNC · Operación. Sin tener que entrar proyecto por proyecto.</div>
+            <div class="view-card-path">Workspace → Your work</div>
+          </div>
+          <div class="view-card">
+            <div class="view-card-num">Vista 4</div>
+            <div class="view-card-title">Línea de tiempo (Gantt)</div>
+            <div class="view-card-q">"¿Hay riesgo de retraso? ¿Se solapan las fases?"</div>
+            <div class="view-card-desc">Tareas y módulos en una línea de tiempo. Para quien planifica y necesita ver dependencias de fechas entre fases o entre proyectos paralelos.</div>
+            <div class="view-card-path">Proyecto → Work Items → Spreadsheet view</div>
+          </div>
+        </div>
+
+        <div class="callout green">
+          <div class="callout-label">Lo que une todo</div>
+          <p>Your work conecta la operación y las iniciativas para cada persona. No importa en cuántos proyectos esté; ve todas sus tareas en un solo lugar.</p>
+        </div>
+      </div>
+
+      <!-- ── REGLAS ── -->
+      <div id="tab-reglas" class="tab-content">
+        <div class="section-eyebrow">Acuerdos del equipo</div>
+        <div class="section-hero-title">Las reglas que hacen<br>que el sistema funcione.</div>
+        <div class="section-rule"></div>
+
+        <div class="section-title">Al crear tareas</div>
+        <div class="divider"></div>
+        <div class="rule-list">
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">Un responsable por tarea</div>
+              <div class="rule-desc">Si son dos personas, se divide en dos tareas. "Comercial y Dev" no es un responsable.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">Título = acción concreta</div>
+              <div class="rule-desc">"Firmar contrato con Yape" en vez de "Contrato". El título debe decir qué hay que hacer.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">Sin fecha, no existe</div>
+              <div class="rule-desc">Si aún no se sabe la fecha exacta, se pone una tentativa y se aclara en comentarios. Pero siempre hay una fecha.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot amber">!</div>
+            <div class="rule-body">
+              <div class="rule-title">Tareas bloqueadas = estado Bloqueado</div>
+              <div class="rule-desc">Si una tarea no puede avanzar, se marca como Bloqueado y se indica en un comentario qué la desbloquea y quién es responsable de ese desbloqueo.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Al actualizar el avance</div>
+        <div class="divider"></div>
+        <div class="rule-list">
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">Actualización mínima semanal</div>
+              <div class="rule-desc">Cada responsable actualiza el estado de sus tareas al menos una vez por semana.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot amber">!</div>
+            <div class="rule-body">
+              <div class="rule-title">Avisar con anticipación</div>
+              <div class="rule-desc">Si una tarea no se va a cumplir en la fecha prometida, el responsable lo avisa con al menos 2 días de anticipación y propone nueva fecha.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot red">✕</div>
+            <div class="rule-body">
+              <div class="rule-title">Los avances van en Plane, no en WhatsApp</div>
+              <div class="rule-desc">Los comentarios en las tareas son el registro oficial. No se usa chat o correo para comunicar avances; eso va en el comentario de la tarea correspondiente.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Al crear proyectos nuevos</div>
+        <div class="divider"></div>
+        <div class="rule-list">
+          <div class="rule-item">
+            <div class="rule-dot red">✕</div>
+            <div class="rule-body">
+              <div class="rule-title">No se trabaja sin proyecto en Plane</div>
+              <div class="rule-desc">Todo proyecto que involucre más de un área y tenga un entregable definido debe crearse en Plane antes de iniciar el trabajo.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">El PM crea el proyecto, no Dev</div>
+              <div class="rule-desc">El responsable de crear el proyecto en Plane es quien lidera la iniciativa, no el equipo técnico.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">Ritual de cierre semanal</div>
+        <div class="divider"></div>
+
+        <div class="callout teal">
+          <div class="callout-label">Todos los viernes</div>
+          <p>Revisión semanal de estado en Plane. Se revisa cómo fue la semana, qué avanzó, qué se bloqueó y cuáles son los objetivos de la siguiente semana. Cada Project Lead actualiza el estado de sus proyectos antes del viernes para que la revisión sea sobre datos reales, no percepciones.</p>
+        </div>
+
+        <div class="rule-list" style="margin-top:16px;">
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">Antes del viernes: actualizar Plane</div>
+              <div class="rule-desc">Cada responsable mueve sus tareas al estado real antes del cierre. Si algo está bloqueado, debe estar marcado como Bloqueado con el comentario correspondiente.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">En la revisión: ver Plane, no escuchar relatos</div>
+              <div class="rule-desc">El status semanal se hace desde Workspace → Projects. El avance lo dice Plane, no cada persona por separado.</div>
+            </div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-dot green">→</div>
+            <div class="rule-body">
+              <div class="rule-title">Al cerrar: definir objetivos de la siguiente semana</div>
+              <div class="rule-desc">Los compromisos de la siguiente semana se crean como tareas en Plane antes de terminar la sesión. Si no quedan en Plane, no existen.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ESTADOS DE PROYECTO ── -->
+      <!-- ── REPLICAR ── -->
+      <div id="tab-replicar" class="tab-content">
+        <div class="section-eyebrow">Escalabilidad</div>
+        <div class="section-hero-title">Un proyecto dedicado a templates.<br>La misma estructura, siempre disponible.</div>
+        <div class="section-rule"></div>
+
+        <p>Todos los templates de Mainframe viven en un proyecto llamado <strong style="color:var(--text)">Recursos generales</strong>. Es un proyecto permanente en el workspace, accesible para cualquier miembro del equipo. Dentro de ese proyecto hay una Page por cada fase del proceso.</p>
+
+        <div class="ws-overview" style="margin:16px 0 24px;">
+          <div class="ws-header">Proyecto · Recursos generales</div>
+          <div class="ws-row">
+            <div>
+              <div class="ws-row-name"><a href="https://docs.google.com/document/d/1wPQg-gWrW0SI5D1yEf6PBvU21q22bqqL/edit?usp=share_link&ouid=105452615429283675991&rtpof=true&sd=true" style="color:var(--pchu-green); text-decoration:none;">Pipeline de iniciativas</a></div>
+              <div class="ws-row-type">Plane Page · registro de viabilidad</div>
+            </div>
+            <div style="font-size:12px; color:var(--text-3);">Fase 0 · fuera del flujo de proyectos</div>
+          </div>
+          <div class="ws-row">
+            <div>
+              <div class="ws-row-name"><a href="https://proyectos.pchujoy.app/desarrollo/projects/bb492fe9-ffc4-4383-bdf6-d1baf04b6085/pages/865f3e2a-464b-4437-b1e5-e49dc5c760ec/" style="color:var(--pchu-green); text-decoration:none;">Template · Brief</a></div>
+              <div class="ws-row-type">Plane Page</div>
+            </div>
+            <div style="font-size:12px; color:var(--text-3);">Fase 1 · al arrancar la iniciativa</div>
+          </div>
+          <div class="ws-row">
+            <div>
+              <div class="ws-row-name">Template · Retroalimentación</div>
+              <div class="ws-row-type">Plane Page</div>
+            </div>
+            <div style="font-size:12px; color:var(--text-3);">Fase 3 · al cerrar el proyecto</div>
+          </div>
+        </div>
+
+        <div class="section-title">Cómo usar un template</div>
+        <div class="divider"></div>
+
+        <div class="step-list">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Abrir el proyecto Recursos generales</div>
+              <div class="step-desc">Está en el sidebar del workspace junto a todos los demás proyectos.</div>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Abrir la Page del template que necesitas</div>
+              <div class="step-desc">Por ejemplo, Template · Brief para arrancar una nueva iniciativa.</div>
+              <span class="step-path">Recursos generales → Pages → Template · Brief</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Duplicar la Page</div>
+              <div class="step-desc">Desde el menú de tres puntos de la Page, selecciona duplicar. Plane crea una copia con toda la estructura.</div>
+              <span class="step-path">Page → ··· → Duplicate</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Mover la copia al proyecto correspondiente</div>
+              <div class="step-desc">Desde el mismo menú, mueve la Page duplicada al proyecto de la iniciativa. Renómbrala con el nombre del proyecto.</div>
+              <span class="step-path">Page → ··· → Move to project</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout green">
+          <div class="callout-label">Importante</div>
+          <p>Nunca edites directamente el template original. Siempre duplica primero y trabaja sobre la copia. El template debe mantenerse limpio para la próxima vez.</p>
+        </div>
+      </div>
+
+      <!-- ── CROSS ESTRUCTURA ── -->
+      <div id="tab-cross_estructura" class="tab-content">
+        <div class="section-eyebrow">Cross-functional Ops</div>
+        <div class="section-hero-title">Varias áreas.<br>Un owner. Un ritual.</div>
+        <div class="section-rule"></div>
+
+        <p>Un Cross-functional Ops es un ritual recurrente que no tiene fecha de cierre. No es una iniciativa porque nunca termina. No es Área Ops porque involucra a varias áreas. Existe mientras el ritual tenga valor para el negocio.</p>
+
+        <div class="section-title">Componentes</div>
+        <div class="divider"></div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--purple);">Proyecto en Plane</div>
+          <div class="row-body-cell"><p>Un proyecto permanente en Plane donde viven todas las tareas del ritual. Nombrado con el área owner y el ritual. Ejemplo: "Producto · Documentación de flujos".</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--purple);">Owner</div>
+          <div class="row-body-cell"><p>El área que lidera. Define el output de cada sprint, consolida los aportes y publica el resultado. Una sola área owner por ritual.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Colaboradores</div>
+          <div class="row-body-cell"><p>Las demás áreas que aportan al ritual con un rol fijo. No deciden sobre el proceso ni la publicación. Su participación es predefinida y recurrente.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Cadencia</div>
+          <div class="row-body-cell"><p>Sprint de 2 semanas. Al inicio del sprint el owner define el output. Al cierre confirma si fue entregado. Esto activa la Fire Flower del sistema de incentivos para todo el equipo.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Guía del ritual</div>
+          <div class="row-body-cell"><p>Documento en Plane Pages que explica el propósito, la frecuencia, el rol de cada área y el entregable esperado. Es el README del proyecto. Lo crea el owner al arrancar.</p></div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">Rituales activos en Mainframe</div>
+        <div class="divider"></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Nombre</th><th>Owner</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>Rituales de Producto</td><td>Producto</td><td><span class="chip green">Activo</span></td></tr>
+              <tr><td>Documentación de experiencias core</td><td>Por definir</td><td><span class="chip amber">Por arrancar</span></td></tr>
+              <tr><td>Gestión de alianzas y beneficios end to end</td><td>Por definir</td><td><span class="chip amber">Por arrancar</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout teal" style="margin-top:28px;">
+          <div class="callout-label">Este manual está en construcción</div>
+          <p>Sobre la marcha vamos a ir robusteciendo cada sección con más ejemplos, casos reales y guías específicas de Mainframe. Si algo no está claro o falta información, avisa a Natalia para que lo actualice.</p>
+        </div>
+      </div>
+
+      <!-- ── OPERACIÓN CONTINUA ── -->
+      <div id="tab-operacion" class="tab-content">
+        <div class="section-eyebrow">Proyectos de operación · Cross-functional Ops</div>
+        <div class="section-hero-title">Un ritual recurrente.<br>Varias áreas, un owner.</div>
+        <div class="section-rule"></div>
+
+        <p>Cross-functional Ops es un ritual que se repite indefinidamente. No tiene fecha de cierre, no necesita propuesta ni brief. Varias áreas participan con un rol fijo y predefinido, pero hay un área que lidera, decide y publica.</p>
+
+        <div class="section-title">Roles</div>
+        <div class="divider"></div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--pchu-green);">Owner</div>
+          <div class="row-body-cell"><p>El área que lidera el ritual y es responsable del resultado. Crea las tareas, consolida los aportes y publica la documentación. Define el output del sprint al inicio de cada sprint de 2 semanas.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Colaboradores</div>
+          <div class="row-body-cell"><p>Las demás áreas participan con un rol fijo y predefinido. Aportan su parte cuando se les asigna pero no tienen decisión sobre el proceso ni sobre la publicación.</p></div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">Ejemplos en Mainframe</div>
+        <div class="divider"></div>
+        <div class="data-table-wrap" style="margin-bottom:20px;">
+          <table class="data-table">
+            <thead><tr><th>Nombre</th><th>Owner</th><th>Cadencia</th></tr></thead>
+            <tbody>
+              <tr><td>Rituales de Producto</td><td>Producto</td><td>Sprint de 2 semanas</td></tr>
+              <tr><td>Documentación de experiencias core</td><td>Por definir</td><td>Sprint de 2 semanas</td></tr>
+              <tr><td>Gestión de alianzas y beneficios end to end</td><td>Por definir</td><td>Sprint de 2 semanas</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Cómo configurar un Cross-functional Ops en Plane</div>
+        <div class="divider"></div>
+        <div class="step-list">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Crear el proyecto</div>
+              <div class="step-desc">Nombrar con el área owner y el ritual. Ejemplo: "Producto · Documentación de flujos".</div>
+              <span class="step-path">Sidebar → Projects → New project</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Invitar a todos los participantes</div>
+              <div class="step-desc">El área owner más todos los colaboradores que participan en el ritual, con sus roles definidos.</div>
+              <span class="step-path">Proyecto → Settings → Members → Invite</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Crear la guía del ritual en Plane Pages</div>
+              <div class="step-desc">Documenta el propósito del ritual, la frecuencia, el rol de cada área y el entregable esperado por sprint. Es el README del proyecto. La crea el owner.</div>
+              <span class="step-path">Proyecto → Pages → New page</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Definir el output del primer sprint</div>
+              <div class="step-desc">Al inicio de cada sprint de 2 semanas, el owner define qué se entregará al cierre. Lo registra como tarea en Plane con fecha y responsable.</div>
+              <span class="step-path">Proyecto → Work Items → Add issue</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Cerrar el sprint y confirmar el output</div>
+              <div class="step-desc">Al cierre del sprint, el owner confirma en Plane si el output fue entregado. Esto activa la Fire Flower para todo el equipo del ritual en el sistema de incentivos.</div>
+              <span class="step-path">Tarea → Estado → Done</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout green">
+          <div class="callout-label">Regla clave</div>
+          <p>Si el ritual empieza a depender de que una iniciativa externa apruebe algo para poder avanzar, ya no es Cross-functional Ops; es una iniciativa con cierre. Coordinar con Natalia.</p>
+        </div>
+
+      </div>
+
+      <!-- ── ÁREA ESTRUCTURA ── -->
+      <div id="tab-area_estructura" class="tab-content">
+        <div class="section-eyebrow">Área Ops</div>
+        <div class="section-hero-title">Un área.<br>Un kanban. Siempre activo.</div>
+        <div class="section-rule"></div>
+
+        <p>Área Ops es el proyecto permanente de cada área para gestionar su trabajo recurrente. No tiene fecha de cierre, no necesita propuesta ni brief. Existe mientras el área exista.</p>
+
+        <div class="section-title">Componentes</div>
+        <div class="divider"></div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--amber);">Proyecto en Plane</div>
+          <div class="row-body-cell"><p>Un proyecto permanente por área. Nombrado con el área y el tipo. Ejemplo: "Dev · Operación", "Marketing · Operación".</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell" style="color:var(--amber);">Lead del área</div>
+          <div class="row-body-cell"><p>El responsable de mantener el kanban actualizado cada viernes. Reporta a Natalia y responde por el avance del área en el sistema de incentivos.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Kanban semanal</div>
+          <div class="row-body-cell"><p>Todas las tareas con estado correcto y fecha vigente al cierre del viernes. Esto activa el Hongo Verde para todo el equipo del área.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Guía del área</div>
+          <div class="row-body-cell"><p>Documento en Plane Pages que describe qué hace el área, quiénes la integran y cómo se prioriza el trabajo. Punto de entrada para cualquier persona nueva.</p></div>
+        </div>
+        <div class="row-grid">
+          <div class="row-label-cell">Guía de procesos</div>
+          <div class="row-body-cell"><p>Documentos en Plane Pages con los procesos del área paso a paso. Mínimo 1 proceso nuevo por sprint, coordinado con Natalia. Activa la Fire Flower del sistema de incentivos.</p></div>
+        </div>
+
+        <div class="section-title" style="margin-top:28px;">Áreas de Mainframe</div>
+        <div class="divider"></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Área</th><th>Nombre en Plane</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td>Diseño</td><td>Diseño · Operación</td><td><span class="chip amber">Por arrancar</span></td></tr>
+              <tr><td>Audiovisual</td><td>Audiovisual · Operación</td><td><span class="chip amber">Por arrancar</span></td></tr>
+              <tr><td>Marketing</td><td>Marketing · Operación</td><td><span class="chip amber">Por arrancar</span></td></tr>
+              <tr><td>Comercial</td><td>Comercial · Operación</td><td><span class="chip amber">Por arrancar</span></td></tr>
+              <tr><td>Dev</td><td>Dev · Operación</td><td><span class="chip green">Activo</span></td></tr>
+              <tr><td>Soporte</td><td>Soporte · Operación</td><td><span class="chip amber">Por arrancar</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout teal" style="margin-top:28px;">
+          <div class="callout-label">Este manual está en construcción</div>
+          <p>Sobre la marcha vamos a ir robusteciendo cada sección con más ejemplos, casos reales y guías específicas de Mainframe. Si algo no está claro o falta información, avisa a Natalia para que lo actualice.</p>
+        </div>
+      </div>
+
+      <!-- ── ÁREA OPS ── -->
+      <div id="tab-crecer" class="tab-content">
+        <div class="section-eyebrow">Proyectos de operación · Área Ops</div>
+        <div class="section-hero-title">Un área, un kanban.<br>Siempre activo.</div>
+        <div class="section-rule"></div>
+
+        <p>Área Ops es el proyecto permanente de cada área para gestionar su trabajo recurrente. No tiene fecha de cierre, no necesita propuesta ni brief. Existe mientras el área exista.</p>
+
+        <div class="section-title">Áreas y ejemplos de tareas</div>
+        <div class="divider"></div>
+        <div class="data-table-wrap" style="margin-bottom:20px;">
+          <table class="data-table">
+            <thead><tr><th>Área</th><th>Ejemplos de tareas</th></tr></thead>
+            <tbody>
+              <tr><td><span class="chip blue">Dev</span></td><td>Bugs reportados, mejoras técnicas, deuda técnica, mantenimiento de infraestructura</td></tr>
+              <tr><td><span class="chip amber">Diseño</span></td><td>Diseño de piezas, activos visuales, revisiones de marca</td></tr>
+              <tr><td><span class="chip purple">Marketing</span></td><td>Publicación de contenido semanal, gestión de pauta, reportes de campaña</td></tr>
+              <tr><td><span class="chip teal">Comercial</span></td><td>Seguimiento de cuentas, reportes de ventas, gestión de aliados</td></tr>
+              <tr><td><span class="chip red">Soporte</span></td><td>Reclamos, consultas, escalamientos, seguimiento de casos</td></tr>
+              <tr><td><span class="chip">Audiovisual</span></td><td>Producción de piezas audiovisuales, edición, archivo de contenido</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Cómo configurar un Área Ops en Plane</div>
+        <div class="divider"></div>
+        <div class="step-list">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">Crear el proyecto</div>
+              <div class="step-desc">Nombrar con el área y el tipo. Ejemplo: "Dev · Operación", "Marketing · Operación".</div>
+              <span class="step-path">Sidebar → Projects → New project</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">Verificar los estados</div>
+              <div class="step-desc">Los estados por defecto de Plane son suficientes: <span class="chip">Backlog</span><span class="chip blue">Todo</span><span class="chip amber">In Progress</span><span class="chip green">Done</span><span class="chip" style="background:rgba(255,255,255,0.06);color:var(--text-3);">Cancelled</span>. Agregar <span class="chip red">Bloqueado</span> si el área lo necesita.</div>
+              <span class="step-path">Proyecto → Settings → States</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">Invitar solo a los miembros del área</div>
+              <div class="step-desc">Área Ops es exclusivo del equipo del área. No se invita a personas de otras áreas salvo que colaboren regularmente.</div>
+              <span class="step-path">Proyecto → Settings → Members → Invite</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="step-title">Crear la guía del área en Plane Pages</div>
+              <div class="step-desc">Documenta qué hace el área, quiénes la integran y cómo se prioriza el trabajo. Es el punto de entrada para cualquier persona nueva. La crea el lead del área.</div>
+              <span class="step-path">Proyecto → Pages → New page</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="step-title">Empezar a documentar procesos</div>
+              <div class="step-desc">Cada proceso nuevo del área se documenta en Plane Pages como una guía de procesos. Mínimo 1 proceso por sprint, coordinado con Natalia. Esto activa la Fire Flower del sistema de incentivos.</div>
+              <span class="step-path">Proyecto → Pages → New page</span>
+            </div>
+          </div>
+          <div class="step-card">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              <div class="step-title">Actualizar el kanban cada viernes</div>
+              <div class="step-desc">Todas las tareas con estado correcto y fecha vigente al cierre del viernes. El lead del área reporta a Natalia. Esto activa el Hongo Verde del sistema de incentivos.</div>
+              <span class="step-path">Proyecto → Work Items → Kanban</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout amber">
+          <div class="callout-label">Regla clave</div>
+          <p>Si una tarea del área empieza a depender de que otra área apruebe o entregue algo para poder avanzar, ya no es Área Ops. Es Cross-functional Ops o una iniciativa. Coordinar con Natalia.</p>
+        </div>
+        <div class="callout teal" style="margin-top:28px;">
+          <div class="callout-label">Este manual está en construcción</div>
+          <p>Sobre la marcha vamos a ir robusteciendo cada sección con más ejemplos, casos reales y guías específicas de Mainframe. Si algo no está claro o falta información, avisa a Natalia para que lo actualice.</p>
+        </div>
+      </div>
+
+
+      <div id="tab-quickref" class="tab-content">
+        <div class="section-eyebrow">Referencia rápida</div>
+        <div class="section-hero-title">¿Dónde está eso<br>en Plane?</div>
+        <div class="section-rule"></div>
+
+        <div class="data-table-wrap">
+          <table class="data-table qref-table">
+            <thead>
+              <tr><th>Quiero ver...</th><th>Dónde en Plane</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Estado de todos los proyectos</td><td>Workspace → Projects</td></tr>
+              <tr><td>Kanban de un proyecto</td><td>Proyecto → Work Items → Board view</td></tr>
+              <tr><td>Mis tareas pendientes</td><td>Workspace → Your work</td></tr>
+              <tr><td>Tareas de una persona específica</td><td>Work Items → filtrar por Assignee</td></tr>
+              <tr><td>Línea de tiempo / Gantt</td><td>Proyecto → Work Items → Spreadsheet view</td></tr>
+              <tr><td>Agregar miembros al proyecto</td><td>Proyecto → Settings → Members</td></tr>
+              <tr><td>Crear estados personalizados</td><td>Proyecto → Settings → States</td></tr>
+              <tr><td>Duplicar proyecto como plantilla</td><td>Proyecto → Settings → Duplicar</td></tr>
+              <tr><td>Tareas bloqueadas del proyecto</td><td>Board view → columna Bloqueado</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div>
+
+<!-- GLOSARIO FAB -->
+<button class="glosario-fab" onclick="document.getElementById('glosarioOverlay').classList.add('visible')">
+  <div class="glosario-fab-dot"></div>
+  Glosario
+</button>
+
+<!-- GLOSARIO MODAL -->
+<div class="glosario-overlay" id="glosarioOverlay" onclick="if(event.target===this)this.classList.remove('visible')">
+  <div class="glosario-modal">
+    <div class="glosario-header">
+      <div>
+        <div class="glosario-eyebrow">Referencia rápida</div>
+        <div class="glosario-title">Glosario de términos</div>
+      </div>
+      <button class="glosario-close" onclick="document.getElementById('glosarioOverlay').classList.remove('visible')">✕</button>
+    </div>
+    <div class="glosario-body">
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Workspace</span>
+          <span class="glosario-full">Espacio de trabajo</span>
+        </div>
+        <div class="glosario-desc">El contenedor principal de toda la organización en Plane. Mainframe tiene un solo workspace donde viven todos los proyectos y todos los miembros del equipo.</div>
+        <div class="glosario-why">Un workspace por organización. No se crean workspaces separados por área.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Proyecto</span>
+          <span class="glosario-full">Project</span>
+        </div>
+        <div class="glosario-desc">La unidad de organización dentro del workspace. Puede ser un proyecto de iniciativa, de operación de área o de Cross-functional Ops. Cada proyecto tiene su propio kanban, miembros y configuración.</div>
+        <div class="glosario-why">Todo trabajo en Mainframe vive dentro de un proyecto.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Work item</span>
+          <span class="glosario-full">Tarea</span>
+        </div>
+        <div class="glosario-desc">La unidad mínima de trabajo en Plane. Cada tarea tiene un título, un responsable, una fecha de entrega y un estado. Sin estos cuatro campos, la tarea no es útil.</div>
+        <div class="glosario-why">Si no está como work item, no existe.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Kanban</span>
+          <span class="glosario-full">Tablero de estados</span>
+        </div>
+        <div class="glosario-desc">Vista de trabajo donde las tareas se organizan en columnas según su estado: Backlog, Todo, In Progress, Done, Bloqueado, Cancelled. Permite ver de un vistazo qué está pasando en un proyecto.</div>
+        <div class="glosario-why">Es la vista principal para el seguimiento del día a día.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Backlog</span>
+          <span class="glosario-full">Cola de tareas pendientes</span>
+        </div>
+        <div class="glosario-desc">Estado inicial de una tarea. Está identificada pero aún no es prioridad. Puede necesitar más contexto o depende de algo que no ha ocurrido todavía.</div>
+        <div class="glosario-why">El backlog no es un basurero. Si una tarea lleva semanas en backlog sin moverse, hay que revisarla o cancelarla.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Project Lead</span>
+          <span class="glosario-full">Responsable del proyecto</span>
+        </div>
+        <div class="glosario-desc">La persona que crea el proyecto, lo mantiene actualizado y responde por su avance. Cada proyecto tiene exactamente un Project Lead. No es necesariamente quien más trabajo hace, sino quien tiene la visión general.</div>
+        <div class="glosario-why">Sin Project Lead, ningún proyecto avanza porque nadie tiene la responsabilidad total.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Sub-issue</span>
+          <span class="glosario-full">Tarea hija</span>
+        </div>
+        <div class="glosario-desc">Una tarea dentro de otra tarea. Útil cuando un entregable requiere que varias personas de distintas áreas aporten algo para poder cerrarse. Cada sub-issue tiene su propio responsable y estado.</div>
+        <div class="glosario-why">Se usa principalmente en Cross-functional Ops, donde cada área tiene su aporte dentro de una tarea principal.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Iniciativa</span>
+          <span class="glosario-full">Proyecto con cierre</span>
+        </div>
+        <div class="glosario-desc">Proyecto temporal con un entregable definido, fecha de cierre y más de un área involucrada. Pasa por viabilidad y brief antes de ejecutarse. Ejemplos: lanzamiento de promo, integración con proveedor, campaña comercial.</div>
+        <div class="glosario-why">Si tiene inicio, fin y mueve a más de un área, es una iniciativa.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Cross-functional Ops</span>
+          <span class="glosario-full">Operación cross-funcional</span>
+        </div>
+        <div class="glosario-desc">Proyecto recurrente donde varias áreas participan con un rol fijo, liderado por un área owner. No tiene fecha de cierre. Ejemplo: Producto · Documentación de flujos, todos los martes.</div>
+        <div class="glosario-why">No es una iniciativa porque nunca cierra. No es operación de área porque involucra a varias.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Área Ops</span>
+          <span class="glosario-full">Operación de área</span>
+        </div>
+        <div class="glosario-desc">Proyecto permanente de un solo equipo para gestionar su trabajo recurrente. Sin fecha de cierre, sin dependencias externas. Ejemplos: Dev · Operación, YNC · Operación.</div>
+        <div class="glosario-why">Existe mientras el área existe. El kanban siempre está activo.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Pipeline</span>
+          <span class="glosario-full">Pipeline de iniciativas</span>
+        </div>
+        <div class="glosario-desc">Plane Page en Recursos generales donde se registran las iniciativas en evaluación de viabilidad. Las iniciativas viven aquí antes de convertirse en proyectos en Plane. Si no pasan la evaluación, quedan registradas con el motivo.</div>
+        <div class="glosario-why">Mantiene el workspace limpio. Solo los proyectos aprobados entran a Plane.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Your work</span>
+          <span class="glosario-full">Mis tareas</span>
+        </div>
+        <div class="glosario-desc">Vista personal en Plane que muestra todas las tareas asignadas a una persona, de todos los proyectos donde participa, tanto de operación como de iniciativas. Es la vista del día a día de cada miembro del equipo.</div>
+        <div class="glosario-why">No hay que entrar proyecto por proyecto. Your work lo consolida todo.</div>
+      </div>
+
+      <div class="glosario-item">
+        <div class="glosario-item-top">
+          <span class="glosario-abbr">Gantt</span>
+          <span class="glosario-full">Línea de tiempo</span>
+        </div>
+        <div class="glosario-desc">Vista de un proyecto que muestra las tareas en una línea de tiempo. Requiere que las tareas tengan fecha de inicio y fin. Permite ver si las fases se solapan o hay riesgo de retraso.</div>
+        <div class="glosario-why">Se activa desde Work Items → Gantt view dentro de cada proyecto.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+      <script>
+  const titles = {
+    intro:     'Introducción',
+    porque:    '¿Por qué esto importa?',
+    tipos:     'Tipos de operación',
+    workspace: 'Workspace',
+    estructura:'Estructura y fases',
+    crear:     'Crear un proyecto',
+    vistas:    'Las 4 vistas',
+    replicar:  'Replicar proyectos',
+    cross_estructura: 'Cross-functional Ops · Estructura y roles',
+    operacion: 'Cross-functional Ops · Cómo configurarlo',
+    area_estructura: 'Área Ops · Estructura y roles',
+    crecer:    'Área Ops · Cómo configurarlo',
+    reglas:    'Reglas del equipo',
+    quickref:  'Referencia rápida',
+  };
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    document.getElementById('page-title').textContent = titles[id] || id;
+    event.currentTarget.classList.add('active');
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('mobileOverlay').classList.remove('visible');
+    document.getElementById('hamburgerBtn').classList.remove('open');
+    window.scrollTo(0, 0);
+  }
+
+  function toggleMobileMenu() {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+    document.getElementById('mobileOverlay').classList.toggle('visible');
+    document.getElementById('hamburgerBtn').classList.toggle('open');
+  }
+</script>
+</body>
+</html>
