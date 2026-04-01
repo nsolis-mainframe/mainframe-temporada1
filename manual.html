@@ -425,10 +425,6 @@
         <div class="nav-dot" style="background:var(--amber)"></div>
         Tipos de operación
       </a>
-      <a class="nav-link" onclick="showTab('workspace')">
-        <div class="nav-dot" style="background:var(--blue)"></div>
-        Workspace
-      </a>
 
       <div class="nav-section">Proyectos de iniciativa</div>
       <a class="nav-link" onclick="showTab('estructura')">
@@ -443,9 +439,9 @@
         <div class="nav-dot" style="background:var(--pchu-green)"></div>
         Las 4 vistas
       </a>
-      <a class="nav-link" onclick="showTab('replicar')">
-        <div class="nav-dot" style="background:var(--teal)"></div>
-        Replicar proyectos
+      <a class="nav-link" onclick="showTab('tutorial')">
+        <div class="nav-dot" style="background:var(--red)"></div>
+        Tutorial en video
       </a>
 
       <div class="nav-section">Cross-functional Ops</div>
@@ -736,124 +732,6 @@
 
       </div>
       <!-- ── WORKSPACE ── -->
-      <div id="tab-workspace" class="tab-content">
-        <div class="section-eyebrow">Arquitectura</div>
-        <div class="section-hero-title">Un workspace.<br>Proyectos separados por área, ritual e iniciativa.</div>
-        <div class="section-rule"></div>
-
-        <p>Todo el equipo Mainframe vive en un solo workspace. Dentro de ese workspace, cada área tiene su propio proyecto de operación, cada ritual recurrente con varias áreas tiene su propio proyecto de Cross-functional Ops, y cada iniciativa temporal tiene su propio proyecto.</p>
-
-        <div class="ws-overview">
-          <div class="ws-header">Workspace · Mainframe: vista de proyectos</div>
-
-          <div class="ws-row">
-            <div>
-              <div class="ws-row-name">🚀 Dev · Operación</div>
-              <div class="ws-row-type">Operación continua</div>
-            </div>
-            <div>
-              <div class="ws-progress-bar"><div class="ws-progress-fill" style="width:100%; background:var(--teal)"></div></div>
-              <div class="ws-progress-label">Rolling · sin cierre</div>
-            </div>
-            <div></div>
-            <div style="font-size:12px; color:var(--text-4)">Dev</div>
-          </div>
-
-          <div class="ws-row">
-            <div>
-              <div class="ws-row-name">⚡ Mario Madness</div>
-              <div class="ws-row-type">Iniciativa · experiencia</div>
-            </div>
-            <div>
-              <div class="ws-progress-bar"><div class="ws-progress-fill" style="width:60%; background:var(--pchu-green)"></div></div>
-              <div class="ws-progress-label">60% completado</div>
-            </div>
-            <div></div>
-            <div style="font-size:12px; color:var(--text-4)">Cross-funcional</div>
-          </div>
-
-          <div class="ws-row">
-            <div>
-              <div class="ws-row-name">📋 Producto · Documentación de flujos</div>
-              <div class="ws-row-type">Cross-functional Ops · ritual semanal</div>
-            </div>
-            <div>
-              <div class="ws-progress-bar"><div class="ws-progress-fill" style="width:0%; background:var(--purple)"></div></div>
-              <div class="ws-progress-label">0% completado</div>
-            </div>
-            <div></div>
-            <div style="font-size:12px; color:var(--text-4)">Producto · owner</div>
-          </div>
-        </div>
-
-        <div class="callout teal">
-          <div class="callout-label">Modelo de crecimiento</div>
-          <p>No configuraremos Plane para todas las áreas de una vez. Conforme se vaya documentando y organizando la operación, se suman proyectos. El sistema no necesita rediseñarse para crecer.</p>
-        </div>
-
-        <div class="section-title" style="margin-top:32px;">Organización en Google Drive</div>
-        <div class="divider"></div>
-
-        <p>Los documentos de soporte del sistema viven en Google Drive, organizados por tipo de operación. Plane es el sistema de gestión del trabajo; Drive es el repositorio de templates, guías y documentos que lo acompañan.</p>
-
-        <div style="margin:16px 0;">
-          <div class="ws-header" style="border-radius:10px 10px 0 0;padding:12px 20px;background:var(--surface-3);border:1px solid var(--border);border-bottom:none;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);">Drive · Inventario de operaciones y proyectos</div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:0 0 10px 10px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-
-            <a href="https://docs.google.com/spreadsheets/d/1AsMo4DSTN3t3nhw6NrBrr5z4QkehYfVj/edit?usp=share_link&ouid=105452615429283675991&rtpof=true&sd=true" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <span style="font-size:20px;">📊</span>
-                <div>
-                  <div style="font-size:13px;font-weight:700;color:var(--text);">Pipeline de iniciativas</div>
-                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Google Sheet · iniciativas en evaluación, aprobadas y rechazadas</div>
-                </div>
-              </div>
-              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
-            </a>
-
-            <a href="https://drive.google.com/drive/folders/18LCkOFruh_bu3Z67mgyMe2Hkt2hpbspl?usp=share_link" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <span style="font-size:20px;">📁</span>
-                <div>
-                  <div style="font-size:13px;font-weight:700;color:var(--text);">Iniciativa/proyecto</div>
-                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carpeta · una subcarpeta por iniciativa: propuesta, brief y retroalimentación</div>
-                </div>
-              </div>
-              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
-            </a>
-
-            <a href="https://drive.google.com/drive/folders/1ys7Zmx9k94blTM5xonJ3T6GkrEPYesry?usp=share_link" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <span style="font-size:20px;">📁</span>
-                <div>
-                  <div style="font-size:13px;font-weight:700;color:var(--text);">Cross-functional Ops</div>
-                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carpeta · una subcarpeta por proyecto: guía del ritual, guía de procesos y entregables</div>
-                </div>
-              </div>
-              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
-            </a>
-
-            <a href="https://drive.google.com/drive/folders/1nJR3acFi4ZyONJtW8VtcZVwzFlq1cjyK?usp=share_link" target="_blank" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--pchu-green)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <span style="font-size:20px;">📁</span>
-                <div>
-                  <div style="font-size:13px;font-weight:700;color:var(--text);">Área Ops</div>
-                  <div style="font-size:11px;color:var(--text-3);margin-top:2px;">Carpeta · una subcarpeta por área: guía del área y guía de procesos</div>
-                </div>
-              </div>
-              <span style="font-size:12px;font-weight:600;color:var(--pchu-green);white-space:nowrap;flex-shrink:0;">Abrir →</span>
-            </a>
-
-          </div>
-        </div>
-
-        <div class="callout green">
-          <div class="callout-label">Dónde está el manual</div>
-          <p>Este manual vive como landing web y su link está en la descripción del Drive. Es el punto de entrada para cualquier persona nueva al sistema.</p>
-        </div>
-      </div>
-
-      <!-- ── ESTRUCTURA ── -->
       <div id="tab-estructura" class="tab-content">
         <div class="section-eyebrow">Proyectos de iniciativa</div>
         <div class="section-hero-title">Cómo se construye<br>un proyecto de iniciativa.</div>
@@ -1140,6 +1018,16 @@
       </div>
 
       <!-- ── REGLAS ── -->
+      <div id="tab-tutorial" class="tab-content">
+        <div class="section-eyebrow">Tutorial</div>
+        <div class="section-hero-title">Mira cómo funciona<br>en la práctica.</div>
+        <div class="section-rule"></div>
+        <div style="max-width:800px;margin:28px auto;">
+          <div style="position:relative;padding-bottom:53.5183349851338%;height:0;">
+            <iframe src="https://www.loom.com/embed/3c73fe76cbf84f179ae323e8076d9583" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;"></iframe>
+          </div>
+        </div>
+      </div>
       <div id="tab-reglas" class="tab-content">
         <div class="section-eyebrow">Acuerdos del equipo</div>
         <div class="section-hero-title">Las reglas que hacen<br>que el sistema funcione.</div>
@@ -1258,82 +1146,6 @@
 
       <!-- ── ESTADOS DE PROYECTO ── -->
       <!-- ── REPLICAR ── -->
-      <div id="tab-replicar" class="tab-content">
-        <div class="section-eyebrow">Escalabilidad</div>
-        <div class="section-hero-title">Un proyecto dedicado a templates.<br>La misma estructura, siempre disponible.</div>
-        <div class="section-rule"></div>
-
-        <p>Todos los templates de Mainframe viven en un proyecto llamado <strong style="color:var(--text)">Recursos generales</strong>. Es un proyecto permanente en el workspace, accesible para cualquier miembro del equipo. Dentro de ese proyecto hay una Page por cada fase del proceso.</p>
-
-        <div class="ws-overview" style="margin:16px 0 24px;">
-          <div class="ws-header">Proyecto · Recursos generales</div>
-          <div class="ws-row">
-            <div>
-              <div class="ws-row-name"><a href="https://docs.google.com/document/d/1wPQg-gWrW0SI5D1yEf6PBvU21q22bqqL/edit?usp=share_link&ouid=105452615429283675991&rtpof=true&sd=true" style="color:var(--pchu-green); text-decoration:none;">Pipeline de iniciativas</a></div>
-              <div class="ws-row-type">Plane Page · registro de viabilidad</div>
-            </div>
-            <div style="font-size:12px; color:var(--text-3);">Fase 0 · fuera del flujo de proyectos</div>
-          </div>
-          <div class="ws-row">
-            <div>
-              <div class="ws-row-name"><a href="https://proyectos.pchujoy.app/desarrollo/projects/bb492fe9-ffc4-4383-bdf6-d1baf04b6085/pages/865f3e2a-464b-4437-b1e5-e49dc5c760ec/" style="color:var(--pchu-green); text-decoration:none;">Template · Brief</a></div>
-              <div class="ws-row-type">Plane Page</div>
-            </div>
-            <div style="font-size:12px; color:var(--text-3);">Fase 1 · al arrancar la iniciativa</div>
-          </div>
-          <div class="ws-row">
-            <div>
-              <div class="ws-row-name">Template · Retroalimentación</div>
-              <div class="ws-row-type">Plane Page</div>
-            </div>
-            <div style="font-size:12px; color:var(--text-3);">Fase 3 · al cerrar el proyecto</div>
-          </div>
-        </div>
-
-        <div class="section-title">Cómo usar un template</div>
-        <div class="divider"></div>
-
-        <div class="step-list">
-          <div class="step-card">
-            <div class="step-num">1</div>
-            <div class="step-body">
-              <div class="step-title">Abrir el proyecto Recursos generales</div>
-              <div class="step-desc">Está en el sidebar del workspace junto a todos los demás proyectos.</div>
-            </div>
-          </div>
-          <div class="step-card">
-            <div class="step-num">2</div>
-            <div class="step-body">
-              <div class="step-title">Abrir la Page del template que necesitas</div>
-              <div class="step-desc">Por ejemplo, Template · Brief para arrancar una nueva iniciativa.</div>
-              <span class="step-path">Recursos generales → Pages → Template · Brief</span>
-            </div>
-          </div>
-          <div class="step-card">
-            <div class="step-num">3</div>
-            <div class="step-body">
-              <div class="step-title">Duplicar la Page</div>
-              <div class="step-desc">Desde el menú de tres puntos de la Page, selecciona duplicar. Plane crea una copia con toda la estructura.</div>
-              <span class="step-path">Page → ··· → Duplicate</span>
-            </div>
-          </div>
-          <div class="step-card">
-            <div class="step-num">4</div>
-            <div class="step-body">
-              <div class="step-title">Mover la copia al proyecto correspondiente</div>
-              <div class="step-desc">Desde el mismo menú, mueve la Page duplicada al proyecto de la iniciativa. Renómbrala con el nombre del proyecto.</div>
-              <span class="step-path">Page → ··· → Move to project</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="callout green">
-          <div class="callout-label">Importante</div>
-          <p>Nunca edites directamente el template original. Siempre duplica primero y trabaja sobre la copia. El template debe mantenerse limpio para la próxima vez.</p>
-        </div>
-      </div>
-
-      <!-- ── CROSS ESTRUCTURA ── -->
       <div id="tab-cross_estructura" class="tab-content">
         <div class="section-eyebrow">Cross-functional Ops</div>
         <div class="section-hero-title">Varias áreas.<br>Un owner. Un ritual.</div>
@@ -1494,7 +1306,7 @@
         </div>
         <div class="row-grid">
           <div class="row-label-cell">Guía de procesos</div>
-          <div class="row-body-cell"><p>Documentos en Plane Pages con los procesos del área paso a paso. Mínimo 1 proceso nuevo por sprint, coordinado con Natalia. Activa la Fire Flower del sistema de incentivos.</p></div>
+          <div class="row-body-cell"><p>Documentos en Plane Pages con los procesos del área paso a paso.</p></div>
         </div>
 
         <div class="section-title" style="margin-top:28px;">Áreas de Mainframe</div>
@@ -1581,7 +1393,7 @@
             <div class="step-num">5</div>
             <div class="step-body">
               <div class="step-title">Empezar a documentar procesos</div>
-              <div class="step-desc">Cada proceso nuevo del área se documenta en Plane Pages como una guía de procesos. Mínimo 1 proceso por sprint, coordinado con Natalia. Esto activa la Fire Flower del sistema de incentivos.</div>
+              <div class="step-desc">Cada proceso nuevo del área se documenta en Plane Pages como una guía de procesos.</div>
               <span class="step-path">Proyecto → Pages → New page</span>
             </div>
           </div>
